@@ -132,7 +132,7 @@
             Sie können jederzeit Ihre Einwilligung ändern oder widerrufen.
           </p>
           <p class="text-xs text-gray-500 mt-3">
-            <strong>Letzte Aktualisierung:</strong> Februar 2024
+            <strong>Letzte Aktualisierung:</strong> Februar 2025
           </p>
         </div>
       </div>
