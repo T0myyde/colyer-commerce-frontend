@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  nuxt-app:
+    build: .
+    container_name: nuxt-app
+    restart: always
+    networks:
+      - web
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge
