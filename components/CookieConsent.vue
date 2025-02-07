@@ -4,29 +4,29 @@
       v-if="showConsent"
       class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
   >
-    <div class="bg-[#1A1E29] rounded-2xl max-w-md w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+    <div class="bg-[#1A1E29] rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
       <!-- Navigation Tabs -->
       <div class="flex border-b border-white/10">
         <button
             @click="activeTab = 'consent'"
-            class="flex-1 py-2 text-center text-sm font-semibold transition-colors"
+            class="flex-1 py-3 text-center font-semibold transition-colors"
             :class="activeTab === 'consent' ? 'text-white bg-white/10' : 'text-gray-400 hover:bg-white/5'"
         >
-          Consent
+          Einwilligung
         </button>
         <button
             @click="activeTab = 'details'"
-            class="flex-1 py-2 text-center text-sm font-semibold transition-colors"
+            class="flex-1 py-3 text-center font-semibold transition-colors"
             :class="activeTab === 'details' ? 'text-white bg-white/10' : 'text-gray-400 hover:bg-white/5'"
         >
           Details
         </button>
         <button
             @click="activeTab = 'about'"
-            class="flex-1 py-2 text-center text-sm font-semibold transition-colors"
+            class="flex-1 py-3 text-center font-semibold transition-colors"
             :class="activeTab === 'about' ? 'text-white bg-white/10' : 'text-gray-400 hover:bg-white/5'"
         >
-          About
+          Über Cookies
         </button>
       </div>
 
@@ -132,7 +132,7 @@
             Sie können jederzeit Ihre Einwilligung ändern oder widerrufen.
           </p>
           <p class="text-xs text-gray-500 mt-3">
-            <strong>Letzte Aktualisierung:</strong> {{ lastUpdated }}
+            <strong>Letzte Aktualisierung:</strong> Februar 2024
           </p>
         </div>
       </div>
@@ -143,14 +143,14 @@
             @click="denyAll"
             class="px-4 py-2 text-xs bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all"
         >
-          Ablehnen
+          Nur notwendige Cookies
         </button>
         <div class="space-x-2">
           <button
               @click="allowSelection"
               class="px-4 py-2 text-xs bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all"
           >
-            Speichern
+            Auswahl speichern
           </button>
           <button
               @click="allowAll"
@@ -165,6 +165,151 @@
 </template>
 
 <script setup>
-// [The entire script remains the same as in the previous implementation]
-// Only the template has been modified to be more compact
+const activeTab = ref('consent')
+const showConsent = ref(false)
+const selectedCategories = ref(['necessary'])
+const lastUpdated = ref('Februar 2024')
+
+const cookieCategories = {
+  necessary: {
+    title: 'Notwendige Cookies',
+    description: 'Technisch unerlässliche Cookies, die für die Grundfunktionalität der Website erforderlich sind.',
+    required: true,
+    cookies: [
+      { name: 'session_id', description: 'Sitzungsidentifikation' },
+      { name: 'security_token', description: 'Websitesicherheit' }
+    ]
+  },
+  preferences: {
+    title: 'Präferenz-Cookies',
+    description: 'Cookies, die die Benutzerfreundlichkeit verbessern und Ihre Vorlieben speichern.',
+    required: false,
+    cookies: [
+      { name: 'language', description: 'Spracheinstellungen' }
+    ]
+  },
+  analytics: {
+    title: 'Analyse-Cookies',
+    description: 'Cookies, die uns helfen zu verstehen, wie Besucher mit der Website interagieren.',
+    required: false,
+    cookies: [
+      { name: '_ga', description: 'Google Analytics Benutzer-ID' },
+      { name: '_gid', description: 'Google Analytics Sitzungs-ID' }
+    ]
+  },
+  marketing: {
+    title: 'Marketing-Cookies',
+    description: 'Cookies zur Personalisierung von Werbung und Tracking über Websites hinweg.',
+    required: false,
+    cookies: [
+      { name: 'ad_session', description: 'Werbe-Tracking' }
+    ]
+  }
+}
+
+// Toggle cookie categories
+const toggleCategory = (category) => {
+  if (cookieCategories[category].required) return
+
+  const index = selectedCategories.value.indexOf(category)
+  if (index > -1) {
+    selectedCategories.value.splice(index, 1)
+  } else {
+    selectedCategories.value.push(category)
+  }
+}
+
+// Cookie management functions
+const setCookie = (name, value, days) => {
+  const date = new Date()
+  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000))
+  const expires = `expires=${date.toUTCString()}`
+  document.cookie = `${name}=${value};${expires};path=/;SameSite=Strict`
+}
+
+const getCookie = (name) => {
+  const cookieName = `${name}=`
+  const decodedCookie = decodeURIComponent(document.cookie)
+  const cookieArray = decodedCookie.split(';')
+
+  for(let i = 0; i < cookieArray.length; i++) {
+    let cookie = cookieArray[i]
+    while (cookie.charAt(0) === ' ') {
+      cookie = cookie.substring(1)
+    }
+    if (cookie.indexOf(cookieName) === 0) {
+      return cookie.substring(cookieName.length, cookie.length)
+    }
+  }
+  return ''
+}
+
+// Consent handling methods
+const denyAll = () => {
+  selectedCategories.value = ['necessary']
+  saveSettings()
+}
+
+const allowSelection = () => {
+  saveSettings()
+}
+
+const allowAll = () => {
+  selectedCategories.value = Object.keys(cookieCategories)
+  saveSettings()
+}
+
+const saveSettings = () => {
+  // Save selected categories
+  setCookie('cookie_consent', JSON.stringify(selectedCategories.value), 365)
+
+  // Initialize tracking based on selected categories
+  initTracking(selectedCategories.value)
+
+  // Hide consent modal
+  showConsent.value = false
+}
+
+// Initialize tracking
+const initTracking = (categories) => {
+  // Clear existing tracking scripts
+  const existingScripts = document.querySelectorAll('script[data-cookie-category]')
+  existingScripts.forEach(script => script.remove())
+
+  // Analytics tracking
+  if (categories.includes('analytics')) {
+    // Google Analytics
+    window.dataLayer = window.dataLayer || []
+    function gtag(){dataLayer.push(arguments)}
+    gtag('js', new Date())
+    gtag('config', 'G-VF160GWL7', { 'anonymize_ip': true })
+
+    const gaScript = document.createElement('script')
+    gaScript.async = true
+    gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-VF160GWL7'
+    gaScript.setAttribute('data-cookie-category', 'analytics')
+    document.head.appendChild(gaScript)
+  }
+}
+
+// Check consent on mount
+onMounted(() => {
+  const existingConsent = getCookie('cookie_consent')
+
+  if (!existingConsent) {
+    // Show consent modal if no previous consent
+    showConsent.value = true
+  } else {
+    // Parse and apply existing consent
+    try {
+      const parsedConsent = JSON.parse(existingConsent)
+      selectedCategories.value = parsedConsent
+      initTracking(parsedConsent)
+    } catch (error) {
+      // Fallback to necessary cookies if parsing fails
+      selectedCategories.value = ['necessary']
+      initTracking(['necessary'])
+    }
+  }
+})
 </script>

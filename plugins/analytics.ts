@@ -10,38 +10,49 @@ export default defineNuxtPlugin(() => {
         script.setAttribute('data-cbid', COOKIEBOT_ID)
         script.setAttribute('data-blockingmode', 'auto')
         script.type = 'text/javascript'
+
+        // Warte auf das onload-Ereignis,
+        // erst dann ist das Script wirklich geladen
+        script.onload = () => {
+            // Cookiebot ist jetzt da
+            initializeGoogleAnalytics()
+        }
+
         document.head.appendChild(script)
     }
 
     function initializeGoogleAnalytics() {
-        // Erstelle das gtag Script Element
+        // 1) GA-Skript laden
         const script = document.createElement('script')
         script.async = true
         script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`
         document.head.appendChild(script)
 
-        // Initialisiere gtag
+        // 2) dataLayer einrichten und gtag definieren
         window.dataLayer = window.dataLayer || []
-        function gtag() {
-            window.dataLayer.push(arguments)
-        }
+        function gtag() { window.dataLayer.push(arguments) }
         window.gtag = gtag
         gtag('js', new Date())
 
-        // Only initialize GA if Cookiebot allows statistics cookies
-        if (window.Cookiebot && window.Cookiebot.consent.statistics) {
+        // 3) Jetzt Cookiebot abfragen
+        if (window.Cookiebot && window.Cookiebot.consent && window.Cookiebot.consent.statistics) {
             gtag('config', GA_ID)
         }
 
-        // Listen for Cookiebot consent changes
-        if (window.CookiebotCallback) {
-            window.CookiebotCallback = function () {
-                if (window.Cookiebot.consent.statistics) {
-                    gtag('config', GA_ID)
-                } else {
-                    // Optionally disable tracking
-                    window['ga-disable-' + GA_ID] = true
-                }
+        // 4) Consent-Änderungen überwachen
+        //    Falls CookiebotCallback noch nicht existiert, legen wir sie an.
+        if (!window.CookiebotCallback) {
+            window.CookiebotCallback = function () {}
+        }
+
+        // Hier überschreiben/erweitern wir die Callback-Funktion
+        const oldCallback = window.CookiebotCallback
+        window.CookiebotCallback = function () {
+            oldCallback()
+            if (window.Cookiebot.consent.statistics) {
+                gtag('config', GA_ID)
+            } else {
+                window['ga-disable-' + GA_ID] = true
             }
         }
     }
