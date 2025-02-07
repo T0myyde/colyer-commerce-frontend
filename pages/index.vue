@@ -70,7 +70,7 @@
             <!-- Service card -->
             <div class="relative h-full">
               <!-- Top accent bar -->
-              <div class="absolute -top-2 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500
+              <div class="absolute -top-14 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500
                       transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
 
               <!-- Service content -->
@@ -241,8 +241,63 @@
         </div>
       </div>
     </section>
+    <!-- Affiliate Section -->
+    <section class="py-10 sm:py-16 relative">
+      <div class="container mx-auto px-4 sm:px-6">
+        <div class="max-w-4xl mx-auto backdrop-blur-sm bg-white/5 border border-white/10 rounded-2xl p-5 sm:p-8">
+          <h2 class="text-2xl sm:text-4xl font-bold text-center mb-4 sm:mb-6">
+          <span class="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
+            Partner-Empfehlungsprogramm
+          </span>
+          </h2>
 
+          <p class="text-center text-gray-300 text-sm sm:text-lg mb-6 sm:mb-8 leading-relaxed">
+            Haben Sie Kontakte zu Unternehmen, die eine innovative digitale Lösung benötigen? Unser Partnerprogramm bietet Ihnen die Chance, von wertvollen Empfehlungen zu profitieren.
+          </p>
 
+          <div class="text-center mb-8 sm:mb-12">
+            <p class="text-white text-base sm:text-lg">
+              Interessiert an einer Partnerschaft?
+              <br>
+              <a href="mailto:partnerprogramm@colyer-commerce.ch"
+                 class="inline-block mt-2 text-lg sm:text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text hover:scale-105 transition-transform duration-300">
+                partnerprogramm@colyer-commerce.ch
+              </a>
+            </p>
+          </div>
+
+          <!-- FAQ Accordion -->
+          <div class="space-y-3 sm:space-y-4">
+            <div v-for="(faq, index) in faqs"
+                 :key="index"
+                 class="relative">
+              <button
+                  @click="toggleFaq(index)"
+                  class="w-full p-3 sm:p-4 text-left backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl
+                     hover:bg-white/10 transition-all duration-300 flex items-center justify-between">
+                <span class="text-sm sm:text-base font-medium">{{ faq.question }}</span>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 sm:h-5 sm:w-5 transform transition-transform duration-300"
+                    :class="{ 'rotate-180': faq.isOpen }"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+              <div
+                  v-show="faq.isOpen"
+                  class="mt-2 p-3 sm:p-4 text-gray-300 bg-black/20 rounded-xl text-xs sm:text-sm leading-relaxed"
+                  style="transition: all 0.3s ease">
+                {{ faq.answer }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <!-- Contact Section -->
     <section id="contact" class="py-20 relative">
       <div class="container mx-auto px-6">
@@ -476,6 +531,29 @@ const technologies = [
     description: 'Datengesteuerte Entscheidungen & Tracking'
   }
 ]
+
+const faqs = ref([
+  {
+    question: 'Wie werden Provisionen berechnet und ausgezahlt?',
+    answer: 'Unsere Provisionszahlungen basieren auf einem transparenten Berechnungsmodell. Nach erfolgreichem Projektabschluss und vollständiger Bezahlung wird die vereinbarte Provision automatisch ermittelt und zeitnah an Sie überwiesen. Die Höhe richtet sich nach dem Projektumfang und der vereinbarten Partnerschaftsstufe.',
+    isOpen: false
+  },
+  {
+    question: 'Wer kann am Partnerprogramm teilnehmen?',
+    answer: 'Unser Partnerprogramm ist vielseitig und offen: Digitalagenturen, IT-Berater, Freelancer, Unternehmen und auch Privatpersonen können teilnehmen. Egal ob Sie ein professionelles Netzwerk haben oder einfach Bekannte kennen, die eine Webseite oder digitale Lösung benötigen – jeder kann Empfehlungen einbringen und von unseren Provisionen profitieren.',
+    isOpen: false
+  },
+  {
+    question: 'Welche strategischen Vorteile bietet die Partnerschaft?',
+    answer: 'Unsere Partnerschaft geht über klassische Provisionszahlungen hinaus. Sie erhalten Zugang zu exklusiven Ressourcen, Schulungsmaterialien und Unterstützung. Gleichzeitig erweitern Sie Ihr berufliches Netzwerk, generieren zusätzliche Einnahmequellen und positionieren sich als kompetenter Vermittler innovativer digitaler Lösungen.',
+    isOpen: false
+  }
+])
+
+const toggleFaq = (index) => {
+  faqs.value[index].isOpen = !faqs.value[index].isOpen
+}
+
 const activeStep = ref(0)
 const processSteps = [
   {
