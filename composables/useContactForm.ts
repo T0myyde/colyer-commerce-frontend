@@ -1,5 +1,5 @@
-// composables/useContactForm.ts
-export default function useContactForm() {
+// composables/useContactForm.js
+export const useContactForm = () => {
     const form = ref({
         name: '',
         email: '',
@@ -7,33 +7,37 @@ export default function useContactForm() {
     })
 
     const isSubmitting = ref(false)
-    const submitStatus = ref(null)
+    const submitStatus = ref('')
     const submitMessage = ref('')
 
     const submitForm = async () => {
-        if (isSubmitting.value) return
-
-        isSubmitting.value = true
-        submitStatus.value = null
-
         try {
-            const { data, error } = await useFetch('/api/contact', {
+            isSubmitting.value = true
+            submitStatus.value = ''
+            submitMessage.value = ''
+
+            const response = await fetch('/.netlify/functions/contact', {
                 method: 'POST',
-                body: form.value
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(form.value)
             })
 
-            if (error.value) {
-                throw error.value
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Ein Fehler ist aufgetreten')
             }
 
-            // Reset form after successful submission
             submitStatus.value = 'success'
             submitMessage.value = 'Ihre Nachricht wurde erfolgreich gesendet!'
             form.value = { name: '', email: '', message: '' }
-        } catch (err) {
+
+        } catch (error) {
+            console.error('Fehler beim Senden:', error)
             submitStatus.value = 'error'
-            submitMessage.value = 'Es gab ein Problem beim Senden der Nachricht. Bitte versuchen Sie es später erneut.'
-            console.error(err)
+            submitMessage.value = 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.'
         } finally {
             isSubmitting.value = false
         }
