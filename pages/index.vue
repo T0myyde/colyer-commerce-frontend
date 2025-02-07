@@ -11,13 +11,23 @@
     <!-- Hero Section -->
     <section class="relative pt-32 pb-20 px-6 overflow-hidden">
       <div class="container mx-auto text-center relative z-10">
-        <div class="inline-block px-4 py-1 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full backdrop-blur-sm border border-white/10 mb-6">
-          <span class="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
+        <div
+            class="inline-block px-4 py-1 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full backdrop-blur-sm border border-white/10 mb-6"
+            v-motion
+            :initial="{ opacity: 0, y: 100 }"
+            :enter="{ opacity: 1, y: 0 }"
+            >
+        <span class="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
             INNOVATIVE WEBENTWICKLUNG
           </span>
         </div>
-        <h1 class="text-6xl font-bold mb-6 leading-tight">
-          Ihre Vision,<br>unsere <span class="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">Expertise</span>
+        <h1
+            class="text-7xl font-bold mb-6 leading-tight"
+            v-motion
+            :initial="{ opacity: 0, y: 100 }"
+            :enter="{ opacity: 1, y: 0, delay: 200 }"
+        >
+          Ihre Vision,<br>unsere <span class="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text animate-gradient">Expertise</span>
         </h1>
         <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-12">
           Wir entwickeln massgeschneiderte Weblösungen, die Ihr Unternehmen auf die nächste Stufe heben.
@@ -37,26 +47,86 @@
 
     <!-- Features Grid -->
     <section id="services" class="py-20 relative">
+      <!-- Mouse spotlight effect container -->
+      <div class="absolute inset-0 overflow-hidden">
+        <div id="spotlight" class="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300">
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-purple-500/30 opacity-0 group-hover:opacity-100
+                  blur-3xl transition-opacity duration-500"></div>
+        </div>
+      </div>
+
       <div class="container mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div v-for="feature in features" :key="feature.title"
-               class="group p-8 rounded-2xl backdrop-blur-sm bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-500 hover:scale-105">
-            <div class="w-14 h-14 mb-6 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 p-0.5">
-              <div class="w-full h-full rounded-xl bg-[#0B0D12] flex items-center justify-center">
-                <div class="text-2xl">{{ feature.icon }}</div>
+        <!-- Main services showcase -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20">
+          <div v-for="(feature, index) in features"
+               :key="feature.title"
+               class="service-module group relative"
+               @mousemove="handleMouseMove"
+               @mouseleave="handleMouseLeave"
+               v-motion
+               :initial="{ opacity: 0, y: 100 }"
+               :enter="{ opacity: 1, y: 0, delay: index * 200 }">
+
+            <!-- Service card -->
+            <div class="relative h-full">
+              <!-- Top accent bar -->
+              <div class="absolute -top-2 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500
+                      transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+
+              <!-- Service content -->
+              <div class="relative z-20 p-8">
+                <!-- Animated number indicator -->
+                <div class="absolute -top-10 -left-10 text-8xl font-bold text-white/5 select-none
+                        group-hover:text-white/10 transition-colors duration-500">
+                  {{ String(index + 1).padStart(2, '0') }}
+                </div>
+
+                <!-- Service icon -->
+                <div class="relative mb-8">
+                  <div class="text-4xl transform group-hover:scale-125 group-hover:-rotate-12
+                          transition-transform duration-500 inline-block">
+                    {{ feature.icon }}
+                  </div>
+                </div>
+
+                <!-- Title -->
+                <h3 class="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400
+                       text-transparent bg-clip-text">
+                  {{ feature.title }}
+                </h3>
+
+                <!-- Description -->
+                <p class="text-gray-400 mb-8 group-hover:text-white transition-colors duration-300">
+                  {{ feature.description }}
+                </p>
+
+                <!-- Interactive feature list -->
+                <div class="space-y-4">
+                  <div v-for="(item, itemIndex) in feature.items"
+                       :key="item"
+                       class="feature-item group/item relative"
+                       :style="{ transitionDelay: itemIndex * 100 + 'ms' }">
+
+                    <!-- Feature background -->
+                    <div class="absolute inset-0 bg-white/5 rounded-lg opacity-0 group-hover:opacity-100
+                            transform origin-left scale-x-0 group-hover:scale-x-100 transition-all duration-500"></div>
+
+                    <!-- Feature content -->
+                    <div class="relative p-4 flex items-center gap-4">
+                      <div class="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-purple-400
+                              transform group-hover/item:scale-150 transition-transform duration-300"></div>
+                      <span class="text-gray-400 group-hover/item:text-white transition-colors duration-300">
+                    {{ item }}
+                  </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Interactive elements -->
+                <div class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-blue-500/5 to-transparent
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </div>
             </div>
-            <h3 class="text-xl font-bold mb-4">{{ feature.title }}</h3>
-            <p class="text-gray-400 mb-6 transition-all duration-300 group-hover:text-white">
-              {{ feature.description }}
-            </p>
-            <ul class="space-y-3">
-              <li v-for="item in feature.items" :key="item"
-                  class="flex items-center gap-2 text-gray-400 group-hover:text-white transition-all duration-300">
-                <span class="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-blue-400 to-purple-400"></span>
-                {{ item }}
-              </li>
-            </ul>
           </div>
         </div>
       </div>
@@ -82,60 +152,91 @@
       </div>
     </section>
     <!-- Process Timeline -->
-    <section id="process" class="py-20 relative">
-      <div class="container mx-auto px-6">
+    <section id="process" class="py-20 relative min-h-screen">
+
+      <!-- Background -->
+      <div class="absolute inset-0">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.15),transparent_50%)]"></div>
+      </div>
+
+      <div class="relative">
         <h2 class="text-4xl font-bold text-center mb-16">
           Unser <span class="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">Prozess</span>
         </h2>
 
-        <div class="max-w-4xl mx-auto">
-          <div class="relative">
-            <!-- Process Steps -->
-            <div class="space-y-12">
-              <div v-for="(step, index) in processSteps"
-                   :key="step.title"
-                   class="process-step group">
-
-                <!-- Step Number -->
-                <div class="flex justify-center mb-6">
-                  <div class="relative w-16 h-16">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full opacity-20 group-hover:opacity-30 blur-md transition-opacity duration-300"></div>
-                    <div class="relative w-full h-full rounded-full backdrop-blur-sm bg-white/5 border border-white/10
-                             flex items-center justify-center text-2xl font-bold
-                             group-hover:border-blue-500/50 transition-all duration-300">
-                      {{ index + 1 }}
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Content Box -->
-                <div class="p-8 backdrop-blur-sm bg-white/5 border border-white/10 rounded-xl
-                         hover:bg-white/10 transition-all duration-300 text-center
-                         group-hover:border-blue-500/50 group-hover:scale-[1.02]">
-                  <h3 class="text-2xl font-bold mb-4">
-                  <span class="bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
-                    {{ step.title }}
-                  </span>
-                  </h3>
-                  <p class="text-gray-400 group-hover:text-gray-300 transition-colors duration-300 mb-6">
-                    {{ step.description }}
-                  </p>
-                  <div class="flex flex-wrap justify-center gap-4">
-                    <div v-for="point in step.points"
-                         :key="point"
-                         class="px-4 py-2 rounded-full backdrop-blur-sm bg-white/5 border border-white/10
-                              text-sm text-gray-400 group-hover:text-gray-300 group-hover:border-blue-500/30
-                              transition-all duration-300">
-                      {{ point }}
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Connecting Line -->
-                <div v-if="index < processSteps.length - 1"
-                     class="w-px h-12 bg-gradient-to-b from-blue-500/50 to-purple-500/50 mx-auto my-4"></div>
+        <!-- Process Steps Carousel -->
+        <div class="flex items-center justify-center gap-8 mb-12">
+          <div v-for="(step, index) in processSteps"
+               :key="step.title"
+               @click="activeStep = index"
+               class="relative cursor-pointer w-16 h-16 flex-shrink-0"
+               :class="{ 'opacity-50': activeStep !== index }">
+            <!-- Number Container -->
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full
+                    opacity-50 blur-md transition-opacity duration-500"
+                 :class="{ 'opacity-75': activeStep === index }"></div>
+            <div class="relative w-full h-full rounded-full border border-white/10
+                    backdrop-blur-sm overflow-hidden transition-all duration-500"
+                 :class="{ 'border-blue-500/50 scale-110': activeStep === index }">
+              <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
+              <div class="relative w-full h-full flex items-center justify-center text-2xl font-bold">
+                {{ index + 1 }}
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Process Content -->
+        <div class="container mx-auto px-4 md:px-6">
+          <div class="relative">
+            <TransitionGroup
+                name="process"
+                tag="div"
+                class="relative"
+            >
+              <div v-for="(step, index) in processSteps"
+                   :key="step.title"
+                   v-show="activeStep === index"
+                   class="process-step">
+
+                <!-- Content Container -->
+                <div class="mx-auto bg-black/20 backdrop-blur-sm rounded-xl md:rounded-2xl p-4 md:p-8 border border-white/10">
+                  <!-- Header -->
+                  <div class="flex items-center justify-between mb-4 md:mb-8">
+                    <h3 class="text-xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
+                      {{ step.title }}
+                    </h3>
+                    <div class="text-2xl md:text-4xl opacity-50">{{ step.icon }}</div>
+                  </div>
+
+                  <!-- Description -->
+                  <p class="text-base md:text-xl text-gray-400 mb-6 md:mb-12">{{ step.description }}</p>
+
+                  <!-- Features Grid -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    <div v-for="feature in step.points"
+                         :key="feature"
+                         class="relative group">
+                      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 rounded-xl
+                              group-hover:from-blue-500/5 group-hover:to-purple-500/5 transition-all duration-300"></div>
+                      <div class="relative p-4 md:p-6 rounded-xl border border-white/5 backdrop-blur-sm
+                              active:border-blue-500/20 md:group-hover:border-blue-500/20 transition-all duration-300">
+                        <!-- Feature Icon -->
+                        <div class="flex items-center gap-3 mb-2 md:mb-4">
+                          <div class="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-blue-500/10 to-purple-500/10
+                                  flex items-center justify-center">
+                            <span class="text-xl md:text-2xl">{{ feature.icon }}</span>
+                          </div>
+                          <h4 class="text-base md:text-lg font-semibold">{{ feature.title }}</h4>
+                        </div>
+                        <!-- Feature Description -->
+                        <p class="text-gray-400 text-sm md:text-base">{{ feature.description }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TransitionGroup>
           </div>
         </div>
       </div>
@@ -192,7 +293,7 @@
             <button
                 type="submit"
                 :disabled="isSubmitting"
-                class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:scale-105 transition-all duration-300 shadow-lg shadow-blue-500/20 disabled:opacity-50"
+                class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg hover:scale-102 transition-all duration-300 shadow-lg shadow-blue-500/20 disabled:opacity-50"
             >
               {{ isSubmitting ? 'Sendet...' : 'Nachricht senden' }}
             </button>
@@ -375,44 +476,119 @@ const technologies = [
     description: 'Datengesteuerte Entscheidungen & Tracking'
   }
 ]
+const activeStep = ref(0)
 const processSteps = [
   {
     title: 'Analyse & Beratung',
     description: 'Wir analysieren Ihre Anforderungen und entwickeln eine maßgeschneiderte Strategie.',
+    icon: '🎯',
     points: [
-      'Bedürfnisanalyse',
-      'Technische Evaluation',
-      'Strategieentwicklung'
+      {
+        icon: '📊',
+        title: 'Bedürfnisanalyse',
+        description: 'Detaillierte Analyse Ihrer Geschäftsziele und Anforderungen'
+      },
+      {
+        icon: '🔍',
+        title: 'Technische Evaluation',
+        description: 'Bewertung der technischen Möglichkeiten und Infrastruktur'
+      },
+      {
+        icon: '📈',
+        title: 'Strategieentwicklung',
+        description: 'Entwicklung einer maßgeschneiderten digitalen Strategie'
+      },
+      {
+        icon: '📋',
+        title: 'Projektplanung',
+        description: 'Detaillierte Zeitplanung und Ressourcenallokation'
+      }
     ]
   },
   {
     title: 'Konzeption & Design',
     description: 'Entwicklung eines detaillierten Konzepts und modernen Designs.',
+    icon: '✨',
     points: [
-      'UI/UX Design',
-      'Wireframing',
-      'Prototyping'
+      {
+        icon: '🎨',
+        title: 'UI/UX Design',
+        description: 'Entwicklung intuitiver und ansprechender Benutzeroberflächen'
+      },
+      {
+        icon: '🖼️',
+        title: 'Wireframing',
+        description: 'Erstellung detaillierter Struktur- und Layoutpläne'
+      },
+      {
+        icon: '📱',
+        title: 'Prototyping',
+        description: 'Entwicklung interaktiver Prototypen zur Visualisierung'
+      },
+      {
+        icon: '🎯',
+        title: 'Design-System',
+        description: 'Entwicklung eines konsistenten Design-Systems'
+      }
     ]
   },
   {
     title: 'Entwicklung',
     description: 'Agile Umsetzung mit modernsten Technologien und regelmäßigen Updates.',
+    icon: '⚡',
     points: [
-      'Frontend-Entwicklung',
-      'Backend-Implementation',
-      'Qualitätssicherung'
+      {
+        icon: '💻',
+        title: 'Frontend-Entwicklung',
+        description: 'Implementierung moderner und reaktiver Benutzeroberflächen'
+      },
+      {
+        icon: '⚙️',
+        title: 'Backend-Implementation',
+        description: 'Entwicklung skalierbarer Server-Infrastruktur'
+      },
+      {
+        icon: '🔍',
+        title: 'Testing',
+        description: 'Umfassende Tests und Qualitätssicherung'
+      },
+      {
+        icon: '⚡',
+        title: 'Optimierung',
+        description: 'Performance-Optimierung und Feintuning'
+      }
     ]
   },
   {
     title: 'Launch & Support',
     description: 'Professioneller Go-Live und kontinuierliche Betreuung.',
+    icon: '🚀',
     points: [
-      'Performance-Optimierung',
-      'Monitoring',
-      'Wartung & Updates'
+      {
+        icon: '🔄',
+        title: 'Deployment',
+        description: 'Professionelle Inbetriebnahme und Installation'
+      },
+      {
+        icon: '📊',
+        title: 'Monitoring',
+        description: 'Kontinuierliche Überwachung und Analyse'
+      },
+      {
+        icon: '🔄',
+        title: 'Updates',
+        description: 'Regelmäßige Updates und Wartung'
+      },
+      {
+        icon: '💬',
+        title: 'Support',
+        description: 'Zuverlässiger technischer Support'
+      }
     ]
   }
 ]
+
+
 </script>
 
 <style scoped>
@@ -438,5 +614,69 @@ const processSteps = [
     padding-top: 60px; /* Adjust based on navbar height */
     padding-bottom: 80px; /* Space for bottom app bar */
   }
+}
+
+.process-step {
+  position: relative;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+.process-enter-active {
+  animation: slideInScale 0.6s ease forwards;
+}
+
+.process-leave-active {
+  animation: slideOutFade 0.4s ease forwards;
+}
+
+@keyframes slideInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(30px);
+  }
+  60% {
+    transform: scale(1.02) translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes slideOutFade {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-30px);
+  }
+}
+
+/* Zusätzliche Animation für die Nummern oben */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.number-active {
+  animation: pulse 2s infinite;
 }
 </style>
