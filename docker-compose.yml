@@ -1,26 +1,26 @@
 version: "3.8"
+
 services:
   nuxt-app:
     build: .
     container_name: nuxt-app
-    restart: always
     networks:
       - web
-    environment:
-      - HOST=0.0.0.0
-      - PORT=3000
+    restart: always
 
   nginx:
     image: nginx:latest
     container_name: nginx-proxy
+    networks:
+      - web
     restart: always
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "80:80"
       - "443:443"
-    networks:
-      - web
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/lib/letsencrypt:/var/lib/letsencrypt:ro
 
 networks:
   web:
