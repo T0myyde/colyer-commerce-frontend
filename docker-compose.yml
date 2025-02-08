@@ -4,11 +4,6 @@ services:
   nuxt-app:
     build: .
     container_name: nuxt-app
-    networks:
-      - web
-    restart: always
-    ports:
-      - "80:8000"
 
   nginx:
     image: nginx:latest
