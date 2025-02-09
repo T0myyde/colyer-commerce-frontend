@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Build the application
-RUN nuxt build
+RUN npm run build
 
 # Production stage
 FROM node:20-alpine
@@ -35,5 +35,5 @@ ENV NODE_ENV=production
 # Expose the port
 EXPOSE 3000
 
-# Start the application
+# Start the application - geändert von npm run start zu direktem Node-Befehl
 CMD ["node", ".output/server/index.mjs"]
