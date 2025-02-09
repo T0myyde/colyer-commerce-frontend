@@ -1,7 +1,16 @@
 services:
   nuxt-app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: nuxt-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"  # Für Debugging
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+    command: npm run start  # oder 'node .output/server/index.mjs' für Nuxt 3
 
   nginx:
     image: nginx:latest
