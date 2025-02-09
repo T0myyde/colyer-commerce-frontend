@@ -1,12 +1,12 @@
 # Build stage
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install dependencies including devDependencies
 RUN npm install
 
 # Copy project files
@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -24,8 +24,8 @@ WORKDIR /app
 COPY --from=builder /app/.output /app/.output
 COPY --from=builder /app/package*.json ./
 
-# Only install production dependencies
-RUN npm ci --only=production
+# Install production dependencies only
+RUN npm ci --omit=dev
 
 # Set environment variables
 ENV HOST=0.0.0.0
